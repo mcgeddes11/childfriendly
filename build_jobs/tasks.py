@@ -1,5 +1,6 @@
-import copy, logging, pickle, unittest, luigi, sys, requests, zipfile, StringIO, re, pandas
+import copy, logging, pickle, unittest, luigi, sys, requests, zipfile, StringIO, re, pandas, numpy
 from build_utils import *
+from geopy import geocoders
 from shutil import copy2
 from bs4 import BeautifulSoup
 
@@ -66,5 +67,44 @@ class ParseCrimeData(ConfigurableTask):
 
         df = pandas.DataFrame.from_records(d)
         df.to_csv(self.output()["crime_data"].path, index=False, encoding="utf-8")
+
+class GetFraserSchoolData(ConfigurableTask):
+    province = luigi.Parameter()
+
+    def output(self):
+        return {"school_data": luigi.LocalTarget(os.path.join(self.build_config["data_repository"], "Raw", self.province, "school_data.csv"))}
+
+    def requires(self):
+        return {"unit_tests": RunTests().withConfig(self.build_config)}
+
+    def run(self):
+        create_folder(self.output()["school_data"].path)
+        # TODO: add other provinces
+        urls = {"BC": {"elementary": "http://britishcolumbia.compareschoolrankings.org/elementary/SchoolsByRankLocationName.aspx",
+                       "secondary": "http://britishcolumbia.compareschoolrankings.org/secondary/SchoolsByRankLocationName.aspx"}}
+        prov_urls = urls[self.province]
+
+        # Secondary
+        r = requests.get(prov_urls["secondary"])
+        if r.status_code != 200:
+            raise Exception("Error getting Fraser school data")
+
+        soup = BeautifulSoup(r.text,"lxml")
+        tbl_secondary = parse_fraser_table(soup)
+        tbl_secondary["school_level"] = "secondary"
+
+        # Elementary
+        r = requests.get(prov_urls["elementary"])
+        if r.status_code != 200:
+            raise Exception("Error getting Fraser school data")
+
+        soup = BeautifulSoup(r.text,"lxml")
+        tbl_elementary = parse_fraser_table(soup)
+        tbl_elementary["school_level"] = "elementary"
+
+        # Combine and output
+        # TODO: GPS lookup for each school
+        tbl_all = pandas.concat((tbl_secondary, tbl_elementary))
+        tbl_all.to_csv(self.output()["school_data"].path, index=False, encoding="utf-8")
 
 

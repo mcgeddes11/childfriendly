@@ -2,4 +2,3 @@ data_repository: '/home/user/data/childfriendly'
 provinces: ["BC"]
 log_level: "DEBUG"
 luigi_worker_count: 1
-google_maps_api_key_name:
