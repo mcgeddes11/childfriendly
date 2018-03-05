@@ -2,11 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e91380db-7b50-4609-8424-983299d1ff9d" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/app/static/img/bg-masthead.jpg" afterPath="$PROJECT_DIR$/app/app/static/img/bg-masthead.jpg" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/app/templates/base.html" afterPath="$PROJECT_DIR$/app/app/templates/base.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/app/templates/index.html" afterPath="$PROJECT_DIR$/app/app/templates/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/app/views.py" afterPath="$PROJECT_DIR$/app/app/views.py" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/app/app/static/img/background-1.jpeg" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/app/app/static/img/background-2.jpeg" afterPath="" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -22,7 +19,7 @@
         <entry file="file://$PROJECT_DIR$/app/app/templates/index.html">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="227">
-              <caret line="116" column="0" lean-forward="false" selection-start-line="116" selection-start-column="0" selection-end-line="116" selection-end-column="0" />
+              <caret line="116" column="32" lean-forward="true" selection-start-line="116" selection-start-column="32" selection-end-line="116" selection-end-column="32" />
               <folding>
                 <marker date="1520228219963" expanded="false" signature="2660:2676" ph="..." />
                 <marker date="1520228219963" expanded="false" signature="3238:3254" ph="..." />
@@ -661,7 +658,7 @@
     <entry file="file://$PROJECT_DIR$/app/app/templates/index.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="227">
-          <caret line="116" column="0" lean-forward="false" selection-start-line="116" selection-start-column="0" selection-end-line="116" selection-end-column="0" />
+          <caret line="116" column="32" lean-forward="true" selection-start-line="116" selection-start-column="32" selection-end-line="116" selection-end-column="32" />
           <folding>
             <marker date="1520228219963" expanded="false" signature="2660:2676" ph="..." />
             <marker date="1520228219963" expanded="false" signature="3238:3254" ph="..." />
