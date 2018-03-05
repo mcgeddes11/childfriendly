@@ -2,6 +2,7 @@ import sys, yaml, hashlib, json, os, logging, luigi
 from shutil import copy2
 from build_utils import create_folder
 from datetime import datetime
+from geopy import geocoders
 from tasks import RunTests, DownloadCensusData, ParseCrimeData, GetFraserSchoolData
 
 
@@ -12,6 +13,8 @@ if __name__ == "__main__":
         raise Exception("No config path file, exiting")
     else:
         configPath = sys.argv[1]
+
+
 
     # # Load config
     with open(configPath, 'r') as stream:
@@ -26,6 +29,10 @@ if __name__ == "__main__":
     logger = logging.getLogger('luigi-interface')
     logger.setLevel(log_level)
     logger.addHandler(file_handler)
+
+    # Create geocoder object
+    GEOCODING_API_KEY = os.getenv("google_maps_key")
+    geolocator = geocoders.GoogleV3(api_key=GEOCODING_API_KEY)
 
     # Add tasks to luigi_jobs build/job
     tasks = []
