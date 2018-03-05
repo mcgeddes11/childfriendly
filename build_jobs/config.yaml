@@ -1,0 +1,5 @@
+data_repository: '/home/user/data/childfriendly'
+school_data_dict:
+  BC: 'http://www.bced.gov.bc.ca/apps/imcl/imclWeb/excelSchoolContact'
+  AB: ''
+  NL: 'http://www.ed.gov.nl.ca/edu/faq/dbfiles/2018/allschools1718.xls'
