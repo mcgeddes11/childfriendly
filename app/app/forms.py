@@ -5,17 +5,14 @@ Licence: GPLv3
 """
 
 from flask_wtf import Form
-from wtforms.fields import TextField, TextAreaField, DateTimeField, PasswordField
-from wtforms.validators import Required
+from wtforms.fields import StringField, PasswordField
+from wtforms.validators import Required, DataRequired, NumberRange
 
-
-class ExampleForm(Form):
-    title = TextField(u'Título', validators = [Required()])
-    content = TextAreaField(u'Conteúdo')
-    date = DateTimeField(u'Data', format='%d/%m/%Y %H:%M')
-    #recaptcha = RecaptchaField(u'Recaptcha')
+class AddressAgeEntryForm(Form):
+    address = StringField(label="address", validators=[DataRequired()],render_kw={"placeholder": "Enter your address..."})
+    age = StringField(label="age", validators=[DataRequired(), NumberRange(1,18)],render_kw={"placeholder": "Child's age..."})
 
 
 class LoginForm(Form):
-    user = TextField(u'Usuário', validators = [Required()])
-    password = PasswordField(u'Senha', validators = [Required()])
+    user = StringField(u'Username', validators = [DataRequired()])
+    password = PasswordField(u'Password', validators = [DataRequired()])
