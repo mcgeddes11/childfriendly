@@ -11,8 +11,19 @@ from forms import ExampleForm, LoginForm
 from models import User
 
 @app.route('/')
+@app.route("/index")
 def index():
     return render_template('index.html')
+
+@app.route("/methodology")
+def methodology():
+    return render_template('index.html')
+
+@app.route("/contact")
+def contact():
+    return render_template('index.html')
+
+
 
 # === User login methods ===
 
@@ -24,7 +35,7 @@ def before_request():
 def load_user(id):
     return User.query.get(int(id))
 
-@app.route('/login/', methods = ['GET', 'POST'])
+@app.route('/login', methods = ['GET', 'POST'])
 def login():
     if g.user is not None and g.user.is_authenticated():
         return redirect(url_for('index'))
@@ -36,7 +47,7 @@ def login():
         title = 'Sign In',
         form = form)
 
-@app.route('/logout/')
+@app.route('/logouts')
 def logout():
     logout_user()
     return redirect(url_for('index'))
