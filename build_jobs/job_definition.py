@@ -2,7 +2,7 @@ import sys, yaml, hashlib, json, os, logging, luigi
 from shutil import copy2
 from build_utils import create_folder
 from datetime import datetime
-from tasks import RunTests, DownloadCensusData, ParseCrimeData
+from tasks import RunTests, DownloadCensusData, ParseCrimeData, GetFraserSchoolData
 
 
 
@@ -32,6 +32,8 @@ if __name__ == "__main__":
     tasks.append(RunTests().withConfig(config))
     tasks.append(DownloadCensusData().withConfig(config))
     tasks.append(ParseCrimeData().withConfig(config))
+    for province in config["provinces"]:
+        tasks.append(GetFraserSchoolData(province).withConfig(config))
 
 
     luigi.build(tasks, local_scheduler=True, workers=config["luigi_worker_count"])
