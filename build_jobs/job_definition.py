@@ -43,4 +43,5 @@ if __name__ == "__main__":
         tasks.append(GetFraserSchoolData(province).withConfig(config))
 
 
+
     luigi.build(tasks, local_scheduler=True, workers=config["luigi_worker_count"])

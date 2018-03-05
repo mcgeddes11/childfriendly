@@ -103,7 +103,6 @@ class GetFraserSchoolData(ConfigurableTask):
         tbl_elementary["school_level"] = "elementary"
 
         # Combine and output
-        # TODO: pull addresses from each url associated with the schools
         # TODO: GPS lookup for each school
         tbl_all = pandas.concat((tbl_secondary, tbl_elementary))
         tbl_all.to_csv(self.output()["school_data"].path, index=False, encoding="utf-8")

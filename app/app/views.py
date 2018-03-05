@@ -18,11 +18,11 @@ def index():
 
 @app.route("/methodology")
 def methodology():
-    return render_template('index.html')
+    return render_template('methodology.html')
 
 @app.route("/contact")
 def contact():
-    return render_template('index.html')
+    return render_template('contact.html')
 
 @app.route("/compute_friendliness", methods=["GET","POST"])
 def compute_friendliness():
@@ -30,7 +30,8 @@ def compute_friendliness():
     msg = ""
     address = request.args["address"]
     age = request.args["age"]
-    return render_template("results.html", msg=msg)
+    data = {"address": address, "age": age}
+    return render_template("results.html", msg=msg, data=data)
 
 
 
