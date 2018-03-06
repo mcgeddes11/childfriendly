@@ -1,11 +1,12 @@
 {% extends "base.html" %}
 {%block content%}
-
+<div class="container">
 	<h1>Results</h1>
-	<div class="container">
+	<div>
 		Your address:  {{ data.address }} <br>
 		Your child's age: {{ data.age }} <br><br>
+		Your data: {{ data }}
 
 	</div>
-
+</div>
 {%endblock%}

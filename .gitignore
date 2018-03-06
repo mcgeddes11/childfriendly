@@ -3,7 +3,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-set_env_vars.sh
+env_vars.txt
 
 # C extensions
 *.so

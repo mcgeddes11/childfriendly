@@ -7,7 +7,7 @@ class ConfigurableTask(luigi.Task):
         self.build_config = config
         return self
 
-# Individual tasks inherit from ConfigurableTask
+# Individual todo.txt inherit from ConfigurableTask
 class MyTask(ConfigurableTask):
     p1 = luigi.parameter.Parameter()
 

@@ -4,11 +4,13 @@ Python Aplication Template
 Licence: GPLv3
 """
 
+import os
 from flask import Flask
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
-# from flask_pymongo import PyMongo
 from flask_login import LoginManager
+from geopy import geocoders
+from services import mongodb_service, scoring_service
 
 app = Flask(__name__)
 
@@ -23,5 +25,6 @@ db = SQLAlchemy(app) #flask-sqlalchemy
 lm = LoginManager()
 lm.init_app(app)
 lm.login_view = 'login'
+geocoder = geocoders.GoogleV3(os.getenv("google_maps_key"))
 
 from app import views, models
