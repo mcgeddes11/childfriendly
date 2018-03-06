@@ -29,11 +29,21 @@ def mg_get(filter, collection_name, projection={}):
     db = client[db_name]
     collection = db[collection_name]
     if projection != {}:
-        rec = collection.find(filter, projection=projection)
+        curs = collection.find(filter, projection=projection)
     else:
-        rec = collection.find(filter)
+        curs = collection.find(filter)
     client.close()
-    return rec
+    recs = [x for x in curs]
+    return recs
+
+def mg_get_near(collection_name, lat, lon, dist_in_m):
+    client = MongoClient(conn_str)
+    db = client[db_name]
+    collection = db[collection_name]
+    curs = collection.find({ "location": { "$nearSphere": { "$geometry": { "type": "Point", "coordinates": [ lon, lat ] }, "$maxDistance": dist_in_m } } })
+    recs = [x for x in curs]
+    client.close()
+    return recs
 
 def mg_drop(collection_name):
     client = MongoClient(conn_str)
@@ -41,7 +51,6 @@ def mg_drop(collection_name):
     collection = db[collection_name]
     collection.drop()
     client.close()
-
 
 
 def mg_create_geo_index(collection_name, field_name):

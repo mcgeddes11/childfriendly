@@ -1,15 +1,20 @@
-import copy, logging, pickle, unittest, luigi, sys, requests, zipfile, StringIO, re, pandas, numpy, time
-from build_utils import *
-from geopy import geocoders
+import StringIO
+import luigi
+import requests
+import time
+import unittest
+import zipfile
 from shutil import copy2
-from bs4 import BeautifulSoup
-from shapely.geometry import LineString
+
 import pyproj
 import shapefile
+from bs4 import BeautifulSoup
+from geopy import geocoders
+from shapely.geometry import LineString
+
+from app.app.services.mongodb_service import *
+from build_utils import *
 from luigi_extensions import ConfigurableTask
-from app.mongodb_service import *
-
-
 
 
 # 1.  Run unit test suite
@@ -165,6 +170,7 @@ class GeocodeSchoolData(ConfigurableTask):
             d = {"location": {"type": "Point", "coordinates": [coords.longitude, coords.latitude]},
                  "town_name": row["City"],
                  "school_name": row["School Name"],
+                 "school_level": row["school_level"],
                  "province": self.province,
                  "score": row["2015-16 Rating"]}
             school_records.append(d)

@@ -6,7 +6,7 @@ Licence: GPLv3
 
 from flask import url_for, redirect, render_template, flash, g, session, jsonify, request, abort
 from flask_login import login_user, logout_user, current_user, login_required
-from app import app, lm
+from app import app, lm, geocoder, scoring_service, mongodb_service
 from forms import LoginForm, AddressAgeEntryForm
 from models import User
 
@@ -29,7 +29,12 @@ def compute_friendliness():
     msg = ""
     address = request.args["address"]
     age = request.args["age"]
-    data = {"address": address, "age": age}
+    # Test retrieval based on geo-location
+    co_ords = geocoder.geocode(address)
+    census_data = mongodb_service.mg_get_near("census", co_ords.latitude, co_ords.longitude, 5000)
+    crime_data = mongodb_service.mg_get_near("crime", co_ords.latitude, co_ords.longitude, 5000)
+    school_data = mongodb_service.mg_get_near("school", co_ords.latitude, co_ords.longitude, 5000)
+    data = {"address": address, "age": age, "census": census_data, "crime": crime_data, "school": school_data}
     return render_template("results.html", msg=msg, data=data)
 
 

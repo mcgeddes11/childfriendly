@@ -31,7 +31,7 @@ if __name__ == "__main__":
     config["GEOCODING_API_KEY"] = os.getenv("google_maps_key")
 
 
-    # Add tasks to luigi_jobs build/job
+    #  Add tasks to luigi_jobs build/job
     tasks = []
     tasks.append(RunTests().withConfig(config))
     tasks.append(DownloadCensusData().withConfig(config))
