@@ -1,0 +1,11 @@
+Dimensions to report on:
+- School performance
+- Demographics
+- Crime
+- Traffic
+
+How to compute dimensions:
+- Traffic: traffic numbers need to be adjusted for population density, then z-scored.  Then nearest n-points considered, weighted heavily by distance.
+- School performance: average within n-km radius, weighted minimally by distance.  No need to be adjusted by population.  Already an index-like ranking.
+- Crime: Average of nearest n points weighted heavily by distance.  No need to be adjusted by population.
+- Demographics:  age-level cohorts converted to percentage of totals then z-scored.  Then we use the nearest n-points weighted minimally by distance.

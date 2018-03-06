@@ -2,8 +2,7 @@ import sys, yaml, hashlib, json, os, logging, luigi
 from shutil import copy2
 from build_utils import create_folder
 from datetime import datetime
-from geopy import geocoders
-from tasks import RunTests, DownloadCensusData, ParseCrimeData, GetFraserSchoolData
+from tasks import RunTests, DownloadCensusData, ParseCrimeData, DownloadCensusShapefile, GetFraserSchoolData, ProcessCensusData, GeocodeCrimeData, GeocodeSchoolData, BuildDatabase
 
 
 
@@ -13,8 +12,6 @@ if __name__ == "__main__":
         raise Exception("No config path file, exiting")
     else:
         configPath = sys.argv[1]
-
-
 
     # # Load config
     with open(configPath, 'r') as stream:
@@ -31,16 +28,22 @@ if __name__ == "__main__":
     logger.addHandler(file_handler)
 
     # Create geocoder object
-    GEOCODING_API_KEY = os.getenv("google_maps_key")
-    geolocator = geocoders.GoogleV3(api_key=GEOCODING_API_KEY)
+    config["GEOCODING_API_KEY"] = os.getenv("google_maps_key")
+
 
     # Add tasks to luigi_jobs build/job
     tasks = []
     tasks.append(RunTests().withConfig(config))
     tasks.append(DownloadCensusData().withConfig(config))
+    tasks.append(DownloadCensusShapefile().withConfig(config))
     tasks.append(ParseCrimeData().withConfig(config))
+    tasks.append(ProcessCensusData().withConfig(config))
+    tasks.append(GeocodeCrimeData().withConfig(config))
     for province in config["provinces"]:
         tasks.append(GetFraserSchoolData(province).withConfig(config))
+        tasks.append(GeocodeSchoolData(province).withConfig(config))
+    tasks.append(BuildDatabase().withConfig(config))
+
 
 
 

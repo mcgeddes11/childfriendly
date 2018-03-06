@@ -1,0 +1,3 @@
+- Write a new task to downloa, extract and pickle the traffic data for BC
+- Extend BuildDatabase to export the traffic data
+- Hook up the

@@ -14,5 +14,5 @@ class AddressAgeEntryForm(Form):
 
 
 class LoginForm(Form):
-    user = StringField(u'Username', validators = [DataRequired()])
+    username = StringField(u'Username', validators = [DataRequired()])
     password = PasswordField(u'Password', validators = [DataRequired()])

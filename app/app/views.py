@@ -26,14 +26,11 @@ def contact():
 
 @app.route("/compute_friendliness", methods=["GET","POST"])
 def compute_friendliness():
-    print request
     msg = ""
     address = request.args["address"]
     age = request.args["age"]
     data = {"address": address, "age": age}
     return render_template("results.html", msg=msg, data=data)
-
-
 
 
 # === User login methods ===
@@ -46,19 +43,20 @@ def before_request():
 def load_user(id):
     return User.query.get(int(id))
 
-@app.route('/login', methods = ['GET', 'POST'])
+@app.route('/login/', methods = ['GET', 'POST'])
 def login():
-    if g.user is not None and g.user.is_authenticated():
+    if g.user is not None and g.user.is_authenticated:
         return redirect(url_for('index'))
     form = LoginForm()
     if form.validate_on_submit():
-        login_user(g.user)
+        # Currently we have no users (and no database!), so return message saying so
+        msg = "User not found!"
+        # login_user(g.user)
+        return render_template('login.html',title = 'Sign In',form = form, msg=msg)
+    else:
+        return render_template('login.html', title='Sign In', form=form, msg="")
 
-    return render_template('login.html',
-        title = 'Sign In',
-        form = form)
-
-@app.route('/logouts')
+@app.route('/logout')
 def logout():
     logout_user()
     return redirect(url_for('index'))
