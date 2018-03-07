@@ -29,12 +29,11 @@ def compute_friendliness():
     msg = ""
     address = request.args["address"]
     age = request.args["age"]
-    # Test retrieval based on geo-location
+    # Use google geolocator api to get the lat/long
     co_ords = geocoder.geocode(address)
-    census_data = mongodb_service.mg_get_near("census", co_ords.latitude, co_ords.longitude, 5000)
-    crime_data = mongodb_service.mg_get_near("crime", co_ords.latitude, co_ords.longitude, 5000)
-    school_data = mongodb_service.mg_get_near("school", co_ords.latitude, co_ords.longitude, 5000)
-    data = {"address": address, "age": age, "census": census_data, "crime": crime_data, "school": school_data}
+    # Score based on location
+    score_data = scoring_service.compute_score(co_ords.latitude, co_ords.longitude, age)
+    data = {"address": address, "age": age, "score_data": score_data}
     return render_template("results.html", msg=msg, data=data)
 
 

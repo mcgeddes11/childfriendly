@@ -1,18 +1,18 @@
 import StringIO
-import luigi
-import requests
 import time
 import unittest
 import zipfile
 from shutil import copy2
 
+import luigi
 import pyproj
+import requests
 import shapefile
 from bs4 import BeautifulSoup
 from geopy import geocoders
 from shapely.geometry import LineString
 
-from app.app.services.mongodb_service import *
+from app.services.mongodb_service import *
 from build_utils import *
 from luigi_extensions import ConfigurableTask
 
