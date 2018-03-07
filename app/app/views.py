@@ -4,11 +4,14 @@ Python Aplication Template
 Licence: GPLv3
 """
 
-from flask import url_for, redirect, render_template, flash, g, session, jsonify, request, abort
-from flask_login import login_user, logout_user, current_user, login_required
-from app import app, lm, geocoder, scoring_service, mongodb_service
-from forms import LoginForm, AddressAgeEntryForm
+from flask import url_for, redirect, render_template, g, request
+from flask_login import logout_user, current_user
+
+from app import app, lm, geocoder
+from app.services import scoring_service
+from forms import LoginForm
 from models import User
+
 
 @app.route('/')
 @app.route("/index")
@@ -32,7 +35,7 @@ def compute_friendliness():
     # Use google geolocator api to get the lat/long
     co_ords = geocoder.geocode(address)
     # Score based on location
-    score_data = scoring_service.compute_score(co_ords.latitude, co_ords.longitude, age)
+    score_data = scoring_service.compute_score(co_ords.latitude, co_ords.longitude, int(age))
     data = {"address": address, "age": age, "score_data": score_data}
     return render_template("results.html", msg=msg, data=data)
 

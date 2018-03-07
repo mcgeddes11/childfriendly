@@ -26,3 +26,4 @@ lm.init_app(app)
 lm.login_view = 'login'
 geocoder = geocoders.GoogleV3(os.getenv("google_maps_key"))
 
+from app import views

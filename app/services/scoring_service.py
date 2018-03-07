@@ -31,6 +31,8 @@ def compute_score(lat, lon, age):
     if len(census_data) == 0:
         final_census_scaled = numpy.nan
     else:
+        all_ratios = all_ratios[all_ratios > 0]
+        all_ratios = numpy.log10(all_ratios)
         census_dists = numpy.array([compute_distance(lat, lon, x["location"]["coordinates"][1], x["location"]["coordinates"][0]) for x in census_data])
         final_census_scaler = MinMaxScaler(feature_range=(1,10))
         final_census_scaler.fit(all_ratios.reshape(-1,1))
@@ -38,6 +40,8 @@ def compute_score(lat, lon, age):
         local_ratios = demographic_ratios_for_age(census_data,age,plusminus=2)
         # Don't need to rescale these based on distance, so we can just take the mean and skip right to the final scaling step
         final_census_score = numpy.mean(local_ratios)
+        print "Raw Census " + str(final_census_score)
+        final_census_score = numpy.log10(final_census_score)
         final_census_scaled = final_census_scaler.transform(final_census_score)[0][0]
 
     # School scores #- * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
@@ -66,17 +70,20 @@ def compute_score(lat, lon, age):
 
         # Compute the final school score
         final_school_score = numpy.mean(school_scores * school_weights)
+        print "Raw School " + str(final_school_score)
         final_school_scaled = final_school_scaler.transform(final_school_score)[0][0]
     # - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
 
     # Crime score - * - * - * - * - * - * - * - *
-    if len(crime_data) == 1:
+    if len(crime_data) == 0:
         final_crime_scaled = numpy.nan
     else:
         crime_dists = numpy.array([compute_distance(lat, lon, x["location"]["coordinates"][1], x["location"]["coordinates"][0]) for x in crime_data])
         # Compute an overall crime score
         crime_scores = numpy.array([x["csi"] for x in crime_data])
 
+        all_crime_scores = all_crime_scores[all_crime_scores > 0]
+        all_crime_scores = numpy.log10(all_crime_scores)
         final_crime_scaler = MinMaxScaler(feature_range=(1, 10))
         final_crime_scaler.fit(all_crime_scores.reshape(-1, 1))
         # Need to invert the distances for the weights so the closest ones have larger values
@@ -94,16 +101,17 @@ def compute_score(lat, lon, age):
 
         # Compute final crime score
         final_crime_score = numpy.mean(crime_weights * crime_scores)
-
+        print "Raw Crime " + str(final_crime_score)
+        final_crime_score = numpy.log10(final_crime_score)
         # Do the final 1-10 scaling
         # For crime, high is bad so we have to take the inverse to get a proper score
         final_crime_scaled = 10 - final_crime_scaler.transform(final_crime_score)[0][0]
 
     #- * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - *
 
-    print "Crime: " + str(final_crime_scaled)
-    print "Schools: " + str(final_school_scaled)
-    print "Demographics: " + str(final_census_scaled)
+    print "Scaled Crime: " + str(final_crime_scaled)
+    print "Scaled Schools: " + str(final_school_scaled)
+    print "Scaled Demographics: " + str(final_census_scaled)
 
     # For now just return a data structure containing raw data
     d = {"census_score": final_census_scaled,

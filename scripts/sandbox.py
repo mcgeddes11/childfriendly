@@ -4,42 +4,42 @@ import app.services.scoring_service as scoring_service
 print "South Valley Drv"
 lat = 48.4718846019967
 lon = -123.410970548589
-age = 5
+age = 2
 scoring_service.compute_score(lat, lon, age)
 
 # Brit's parents'
 print "Whitehead Place"
 lat = 48.4460765
 lon = -123.4810812
-age = 5
+age = 2
 scoring_service.compute_score(lat, lon, age)
 
 # Next to best school in BC
 print "York House School"
 lat = 49.2489053
 lon = -123.1433611
-age = 5
+age = 2
 scoring_service.compute_score(lat, lon, age)
 
 # Somewhere in Prince George
 print "Somewhere in Prince George"
 lat = 53.9084912
 lon = -122.7510932
-age = 5
+age = 2
 scoring_service.compute_score(lat, lon, age)
 
 # Northumberland ontario (low crime)
 print "Williams Lake BC"
 lat = 52.1492618
 lon = -122.147443
-age = 5
+age = 2
 scoring_service.compute_score(lat,lon,age)
 
 #
 print "Kulkayu"
 lat = 53.4229942
 lon = -129.2653316
-age = 5
+age = 2
 scoring_service.compute_score(lat,lon,age)
 
 
