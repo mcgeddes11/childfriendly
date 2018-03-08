@@ -62,6 +62,7 @@ svg {
   var homePos = {lat: data.lat, lng: data.lon}
   var crimeUrl = "http://maps.google.com/mapfiles/ms/icons/police.png";
   var schoolUrl = "http://maps.google.com/mapfiles/ms/icons/homegardenbusiness.png";
+  var censusUrl = "https://maps.gstatic.com/mapfiles/ms2/micons/info_circle.png"
   function initMap() {
 	map = new google.maps.Map(document.getElementById('map_object'), {
 	  center: homePos,
@@ -76,6 +77,8 @@ svg {
 	addItems(data.score_data.crime_raw, map, crimeUrl);
 	// Schools
 	addItems(data.score_data.schools_raw, map, schoolUrl);
+	// Census
+	addItems(data.score_data.census_raw, map, censusUrl);
 
   }
 
@@ -98,15 +101,20 @@ svg {
 	}
   }
 
-  // Code to generate the score plots
-	createChart("crime_score_wheel", "Crime Score",2.5)
-	createChart("census_score_wheel", "Census Score",8.532)
-	createChart("school_score_wheel", "School Score",6.213)
+    // Deal with nulls in individual scores
+  	var crime_score = data.score_data.crime_raw.length == 0 ? 0 : data.score_data.crime_score
+  	var census_score = data.score_data.census_raw.length == 0 ? 0 : data.score_data.census_score
+  	var schools_score = data.score_data.schools_raw.length == 0 ? 0 : data.score_data.schools_score
+	// Generate the score plots
+	createChart("crime_score_wheel", "Crime Score", crime_score)
+	createChart("census_score_wheel", "Census Score",census_score)
+	createChart("school_score_wheel", "School Score",schools_score)
 
   // This function creates the score donuts on the rhs
   function createChart(id, titleString, score){
-	// Mapping of scores to text and colors
-	var scoreMap = [{ "min_bound": 0, "max_bound":1, "color": "#FF0000", "desc": "Terrible"},
+	// Mapping of scores to text and colors:  -1 -> 0 interval is for null case
+	var scoreMap = [{ "min_bound": -1, "max_bound": 0, "color": "#d6d6c2", "desc": "N/A"},
+					{ "min_bound": 0, "max_bound":1, "color": "#FF0000", "desc": "Terrible"},
 					{ "min_bound": 1, "max_bound":2, "color": "#FF3300", "desc": "Bad"},
 					{ "min_bound": 2, "max_bound":3, "color": "#ff6600", "desc": "Well Below Average"},
 					{ "min_bound": 3, "max_bound":4, "color": "#ff9900", "desc": "Below Average" },
@@ -119,11 +127,12 @@ svg {
 	var scoreColor;
 	var scoreDesc;
 	for (ii=0; ii < scoreMap.length; ii++){
-		if (score >= scoreMap[ii].min_bound && score <= scoreMap[ii].max_bound){
+		if (score > scoreMap[ii].min_bound && score <= scoreMap[ii].max_bound){
 			scoreColor = scoreMap[ii].color;
 			scoreDesc = scoreMap[ii].desc;
 		}
 	}
+
 
 	$("#scores_view").append('<div id="' + id + '"></div>');
 	var plotdiv = $("#" + id)
@@ -144,7 +153,7 @@ svg {
 			.showLegend(false)
 			.labelThreshold(.05)
 			.labelType("key")
-			.color([scoreColor,"	#d6d6c2"])
+			.color([scoreColor,"#d6d6c2"])
 			.tooltipContent(
 			function(key, y, e, graph) { return 'Custom tooltip string' }
 		  ) // This is for when I turn on tooltips
@@ -164,7 +173,7 @@ svg {
 
 				// Insert first line of text into middle of donut pie chart
 				donut.insert("text", "g")
-					.text(score.toFixed(1))
+					.text(score == 0 ? "" : score.toFixed(1))
 					.attr("class", "middle")
 					.attr("text-anchor", "middle")
 						.attr("dy", "-.55em")
