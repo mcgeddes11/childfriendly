@@ -9,3 +9,8 @@ How to compute dimensions:
 - School performance: average within n-km radius, weighted minimally by distance.  No need to be adjusted by population.  Already an index-like ranking.
 - Crime: Average of nearest n points weighted heavily by distance.  No need to be adjusted by population.
 - Demographics:  age-level cohorts converted to percentage of totals then z-scored.  Then we use the nearest n-points weighted minimally by distance.
+
+
+
+Data notes:
+- Ontario traffic data coord system: GCS_North_American_1983

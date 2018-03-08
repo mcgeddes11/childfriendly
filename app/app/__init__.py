@@ -10,7 +10,6 @@ from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from geopy import geocoders
-from services import mongodb_service, scoring_service
 
 app = Flask(__name__)
 
@@ -27,4 +26,4 @@ lm.init_app(app)
 lm.login_view = 'login'
 geocoder = geocoders.GoogleV3(os.getenv("google_maps_key"))
 
-from app import views, models
+from app import views

@@ -1,12 +1,234 @@
 {% extends "base.html" %}
 {%block content%}
+<style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map_object {
+        height: 500px;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+
+.content h1 {
+  font-weight: 300;
+  text-align: center;
+}
+
+svg {
+  width: 300px;
+  height: 300px;
+  margin: 0 auto;
+
+   text.middle {
+    font-weight: 300;
+    font-size: 24px;
+  }
+
+  .nvd3.nv-pie .nv-pieLabels text {
+    font-family: Lato;
+    font-size: 24px;
+    font-weight: 300;
+    fill: #fff !important;
+  }
+}
+</style>
+
 <div class="container">
 	<h1>Results</h1>
-	<div>
-		Your address:  {{ data.address }} <br>
-		Your child's age: {{ data.age }} <br><br>
-		Your data: {{ data }}
 
+		<h3>Your address</h3>
+		<div id="address"></div><br>
+		<h4>Child's age</h4>
+		<div id="age"></div><br>
+
+
+
+	<div class="container">
+		<div class="row">
+  			<div id="map_view" class="col-md-8">
+				<div id="map_object"></div>
+			</div>
+  			<div id="scores_view" class="col-md-4"></div>
+		</div>
 	</div>
-</div>
+
+
+<script>
+
+  var map;
+  var data = {{ data | safe }};
+  $("#address").text(data.address)
+  $("#age").text(data.age)
+  var homePos = {lat: data.lat, lng: data.lon}
+  var crimeUrl = "http://maps.google.com/mapfiles/ms/icons/police.png";
+  var schoolUrl = "http://maps.google.com/mapfiles/ms/icons/homegardenbusiness.png";
+  var censusUrl = "https://maps.gstatic.com/mapfiles/ms2/micons/info_circle.png"
+  function initMap() {
+	map = new google.maps.Map(document.getElementById('map_object'), {
+	  center: homePos,
+	  zoom: 12
+	});
+	var home_marker = new google.maps.Marker({
+		position: homePos,
+		map: map
+	});
+
+	// Crime
+	addItems(data.score_data.crime_raw, map, crimeUrl);
+	// Schools
+	addItems(data.score_data.schools_raw, map, schoolUrl);
+	// Census
+	addItems(data.score_data.census_raw, map, censusUrl);
+
+  }
+
+  // Function to add records and tooltips to the map
+  function addItems(data,map,url){
+	var record;
+	var lat;
+	var lon;
+	var marker
+	// TODO: add tooltips to these with the location name and scaled scores
+	for (ii = 0; ii < data.length; ii++){
+		record = data[ii]
+		lat = record.location.coordinates[1]
+		lon = record.location.coordinates[0]
+		marker = new google.maps.Marker({
+			position: {lat: lat, lng: lon},
+			map: map,
+			icon: url
+		});
+	}
+  }
+
+    // Deal with nulls in individual scores
+  	var crime_score = data.score_data.crime_raw.length == 0 ? 0 : data.score_data.crime_score
+  	var census_score = data.score_data.census_raw.length == 0 ? 0 : data.score_data.census_score
+  	var schools_score = data.score_data.schools_raw.length == 0 ? 0 : data.score_data.schools_score
+	// Generate the score plots
+	createChart("crime_score_wheel", "Crime Score", crime_score)
+	createChart("census_score_wheel", "Census Score",census_score)
+	createChart("school_score_wheel", "School Score",schools_score)
+
+  // This function creates the score donuts on the rhs
+  function createChart(id, titleString, score){
+	// Mapping of scores to text and colors:  -1 -> 0 interval is for null case
+	var scoreMap = [{ "min_bound": -1, "max_bound": 0, "color": "#d6d6c2", "desc": "N/A"},
+					{ "min_bound": 0, "max_bound":1, "color": "#FF0000", "desc": "Terrible"},
+					{ "min_bound": 1, "max_bound":2, "color": "#FF3300", "desc": "Bad"},
+					{ "min_bound": 2, "max_bound":3, "color": "#ff6600", "desc": "Well Below Average"},
+					{ "min_bound": 3, "max_bound":4, "color": "#ff9900", "desc": "Below Average" },
+					{ "min_bound": 4, "max_bound":5, "color": "#FFCC00", "desc": "Average"},
+					{ "min_bound": 5, "max_bound":6, "color": "#FFFF00", "desc": "Average"},
+					{ "min_bound": 6, "max_bound":7, "color": "#ccff00", "desc": "Above Average"},
+					{ "min_bound": 7, "max_bound":8, "color": "#66ff00", "desc": "Good"},
+					{ "min_bound": 8, "max_bound":9, "color": "#33ff00", "desc": "Great"},
+					{ "min_bound": 9, "max_bound":10, "color": "#00FF00", "desc": "Fantastic"}]
+	var scoreColor;
+	var scoreDesc;
+	for (ii=0; ii < scoreMap.length; ii++){
+		if (score > scoreMap[ii].min_bound && score <= scoreMap[ii].max_bound){
+			scoreColor = scoreMap[ii].color;
+			scoreDesc = scoreMap[ii].desc;
+		}
+	}
+
+
+	$("#scores_view").append('<div id="' + id + '"></div>');
+	var plotdiv = $("#" + id)
+	plotdiv.append("<svg></svg>")
+
+
+
+	// Create the donut pie chart and insert it onto the page
+	nv.addGraph(function() {
+	  var donutChart = nv.models.pieChart()
+			.x(function(d) {
+			return d.label
+		  })
+			.y(function(d) {
+			return d.value
+		  })
+			.showLabels(false)
+			.showLegend(false)
+			.labelThreshold(.05)
+			.labelType("key")
+			.color([scoreColor,"#d6d6c2"])
+			.tooltipContent(
+			function(key, y, e, graph) { return 'Custom tooltip string' }
+		  ) // This is for when I turn on tooltips
+			.tooltips(false)
+			.donut(true)
+			.donutRatio(0.4);
+
+		// Insert text into the center of the donut
+		function centerText() {
+			return function() {
+				var svg = d3.select("#" + id + " svg");
+				var donut = svg.selectAll("g.nv-slice").filter(
+					function (d, i) {
+					return i == 0;
+					}
+				);
+
+				// Insert first line of text into middle of donut pie chart
+				donut.insert("text", "g")
+					.text(score == 0 ? "" : score.toFixed(1))
+					.attr("class", "middle")
+					.attr("text-anchor", "middle")
+						.attr("dy", "-.55em")
+						.attr("font-size","10px")
+						.attr("fill","#000000")
+						.attr("stroke","#000000");
+				// Insert second line of text into middle of donut pie chart
+				donut.insert("text", "g")
+					.text(scoreDesc)
+					.attr("class", "middle")
+					.attr("text-anchor", "middle")
+						.attr("dy", ".85em")
+						.attr("font-size","8px")
+						.attr("fill","#000000")
+						.attr("stroke","#000000");
+			}
+		}
+
+	  // Put the donut pie chart together
+	  d3.select("#" + id + " svg")
+		.datum(seedData(score))
+		.transition().duration(300)
+		.call(donutChart)
+		.call(centerText());
+
+	  return donutChart;
+	});
+
+
+	// Seed data to populate donut pie chart
+	function seedData(score) {
+	  return [
+		{
+		  "label": "good",
+		  "value": score
+		},
+		{
+		  "label": "bad",
+		  "value": 10 - score
+		}
+	  ];
+	}
+	// Add titles
+	d3.select("#" + id + " svg")
+	  .append("text")
+	  .attr("x", 150)
+	  .attr("y", 30)
+	  .attr("text-anchor", "middle")
+	  .text(titleString);
+	}
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC1h2PWILmMxZm5ipfiApFUdus_NvsI8WE&callback=initMap" async defer></script>
+
 {%endblock%}
