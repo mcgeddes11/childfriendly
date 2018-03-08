@@ -8,10 +8,11 @@ from flask import url_for, redirect, render_template, g, request
 from flask_login import logout_user, current_user
 
 from app import app, lm, geocoder
-from app.services import scoring_service
+# Need to ensure path to services is on PYTHONPATH
+from services import scoring_service
 from forms import LoginForm
 from models import User
-
+import json
 
 @app.route('/')
 @app.route("/index")
@@ -32,12 +33,19 @@ def compute_friendliness():
     msg = ""
     address = request.args["address"]
     age = request.args["age"]
+    # TODO: check inputs
+
+    # Testing with our address
+    score_data = scoring_service.compute_score(48.4718846019967,-123.410970548589,5)
+
+    # COMMENTED OUT FOR TESTING
     # Use google geolocator api to get the lat/long
-    co_ords = geocoder.geocode(address)
-    # Score based on location
-    score_data = scoring_service.compute_score(co_ords.latitude, co_ords.longitude, int(age))
-    data = {"address": address, "age": age, "score_data": score_data}
-    return render_template("results.html", msg=msg, data=data)
+    # co_ords = geocoder.geocode(address)
+    # # Score based on location
+    # score_data = scoring_service.compute_score(co_ords.latitude, co_ords.longitude, int(age))
+    # data = {"address": address, "lat": coords_latitude, "long": co_ords.longitude, "age": age, "score_data": score_data}
+    data = {"address": address, "lat": 48.4718846019967, "lon": -123.410970548589, "age": age, "score_data": score_data}
+    return render_template("results.html", msg=msg, data=json.dumps(data))
 
 
 # === User login methods ===

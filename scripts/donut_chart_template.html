@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+    <!-- Custom CSS -->
+    <link href="https://cdn.rawgit.com/novus/nvd3/v1.8.1/build/nv.d3.css" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
+* {
+  font-family: Lato;
+}
+
+.content h1 {
+  font-weight: 300;
+  text-align: center;
+}
+
+svg {
+  width: 500px;
+  height: 500px;
+  margin: 0 auto;
+
+   text.middle {
+    font-family: Lato;
+    font-weight: 300;
+    font-size: 24px;
+  }
+
+  .nvd3.nv-pie .nv-pieLabels text {
+    font-family: Lato;
+    font-size: 24px;
+    font-weight: 300;
+    fill: #fff !important;
+  }
+}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
+<script src="https://cdn.rawgit.com/novus/nvd3/v1.8.1/build/nv.d3.min.js"></script>
+<script src="jquery-3.3.1.min.js"></script>
+
+<body>
+<div class="content">
+  <h1>NVD3 Donut Pie Chart</h1>
+
+  <div id="donut-chart">
+    <svg></svg>
+  </div>
+</div>
+
+	<script>
+		// Create the donut pie chart and insert it onto the page
+		nv.addGraph(function() {
+		  var donutChart = nv.models.pieChart()
+				.x(function(d) {
+				return d.label
+			  })
+				.y(function(d) {
+				return d.value
+			  })
+				.showLabels(false)
+				.showLegend(false)
+				.labelThreshold(.05)
+				.labelType("key")
+				.color(["#FFCC00","	#000000"])
+				.tooltipContent(
+				function(key, y, e, graph) { return 'Custom tooltip string' }
+			  ) // This is for when I turn on tooltips
+				.tooltips(false)
+				.donut(true)
+				.donutRatio(0.35);
+
+			// Insert text into the center of the donut
+			function centerText() {
+				return function() {
+					var svg = d3.select("svg");
+					var donut = svg.selectAll("g.nv-slice").filter(
+						function (d, i) {
+						return i == 0;
+						}
+					);
+
+					// Insert first line of text into middle of donut pie chart
+					donut.insert("text", "g")
+						.text("6.7")
+						.attr("class", "middle")
+						.attr("text-anchor", "middle")
+							.attr("dy", "-.55em")
+							.attr("font-size","40px")
+							.attr("fill","#000000")
+							.attr("stroke","#000000");
+					// Insert second line of text into middle of donut pie chart
+					donut.insert("text", "g")
+						.text("Good")
+						.attr("class", "middle")
+						.attr("text-anchor", "middle")
+							.attr("dy", ".85em")
+							.attr("font-size","22px")
+							.attr("fill","#000000")
+							.attr("stroke","#000000");
+				}
+			}
+
+		  // Put the donut pie chart together
+		  d3.select("#donut-chart svg")
+			.datum(seedData())
+			.transition().duration(300)
+			.call(donutChart)
+			.call(centerText());
+
+		  return donutChart;
+		});
+
+
+		// Seed data to populate donut pie chart
+		function seedData() {
+		  return [
+			{
+			  "label": "good",
+			  "value": 6.7
+			},
+			{
+			  "label": "bad",
+			  "value": 3.3
+			}
+		  ];
+		}
+		// foo
+		d3.select('svg')
+		  .append("text")
+		  .attr("x", 250)
+		  .attr("y", 40)
+		  .attr("text-anchor", "middle")
+		  .text("Crime");
+	</script>
+
+
+</body>
+
+
+

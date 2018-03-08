@@ -113,13 +113,14 @@ def compute_score(lat, lon, age):
     print "Scaled Schools: " + str(final_school_scaled)
     print "Scaled Demographics: " + str(final_census_scaled)
 
-    # For now just return a data structure containing raw data
+    # Remove Mongo indexes and out data
+
     d = {"census_score": final_census_scaled,
-         "census_raw": census_data,
+         "census_raw": [{i: x[i] for i in x if i != '_id'} for x in census_data],
          "crime_score": final_crime_scaled,
-         "crime_raw": crime_data,
+         "crime_raw": [ {i: x[i] for i in x if i != '_id'} for x in crime_data],
          "schools_score": final_school_scaled,
-         "schools_raw": school_data}
+         "schools_raw": [ {i: x[i] for i in x if i != '_id'} for x in school_data]}
     return d
 
 # Compute distance between 2 lat/lon points, in km
