@@ -39,11 +39,13 @@ svg {
 
 <div class="container">
 	<h1>Results</h1>
-	<div>
-		Your address:  {{ data.address }} <br>
-		Your child's age: {{ data.age }} <br><br>
 
-	</div>
+		<h3>Your address</h3>
+		<div id="address"></div><br>
+		<h4>Child's age</h4>
+		<div id="age"></div><br>
+
+
 
 	<div class="container">
 		<div class="row">
@@ -54,11 +56,13 @@ svg {
 		</div>
 	</div>
 
-</div>
 
 <script>
+
   var map;
   var data = {{ data | safe }};
+  $("#address").text(data.address)
+  $("#age").text(data.age)
   var homePos = {lat: data.lat, lng: data.lon}
   var crimeUrl = "http://maps.google.com/mapfiles/ms/icons/police.png";
   var schoolUrl = "http://maps.google.com/mapfiles/ms/icons/homegardenbusiness.png";

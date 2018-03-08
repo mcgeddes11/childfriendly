@@ -35,18 +35,19 @@ def compute_friendliness():
     age = request.args["age"]
     # TODO: check inputs
 
-    # Testing with our address
-    lat = 53.4229942
-    lon = -129.2653316
-    score_data = scoring_service.compute_score(lat,lon,5)
+    # Testing
+    # lat = 53.4229942
+    # lon = -129.2653316
+    # score_data = scoring_service.compute_score(lat,lon,5)
+    # data = {"address": address, "lat": lat, "lon": lon, "age": age, "score_data": score_data}
 
-    # COMMENTED OUT FOR TESTING
+    # For realsies
     # Use google geolocator api to get the lat/long
-    # co_ords = geocoder.geocode(address)
-    # # Score based on location
-    # score_data = scoring_service.compute_score(co_ords.latitude, co_ords.longitude, int(age))
-    # data = {"address": address, "lat": coords_latitude, "long": co_ords.longitude, "age": age, "score_data": score_data}
-    data = {"address": address, "lat": lat, "lon": lon, "age": age, "score_data": score_data}
+    co_ords = geocoder.geocode(address)
+    # Score based on location
+    score_data = scoring_service.compute_score(co_ords.latitude, co_ords.longitude, int(age))
+    data = {"address": co_ords.address, "lat": co_ords.latitude, "lon": co_ords.longitude, "age": age, "score_data": score_data}
+
     return render_template("results.html", msg=msg, data=json.dumps(data))
 
 
