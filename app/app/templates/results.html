@@ -4,7 +4,7 @@
       /* Always set the map height explicitly to define the size of the div
        * element that contains the map. */
       #map_object {
-        height: 500px;
+        height: 100%;
       }
       /* Optional: Makes the sample page fill the window. */
       html, body {
@@ -35,9 +35,13 @@ svg {
     fill: #fff !important;
   }
 }
+
+.container-fluid {
+	width: 80%
+}
 </style>
 
-<div class="container">
+<div class="container-fluid">
 	<h1>Results</h1>
 
 		<h3>Your address</h3>
@@ -47,15 +51,16 @@ svg {
 
 
 
-	<div class="container">
+	<div class="container-fluid" style="width: 100%">
 		<div class="row">
-  			<div id="map_view" class="col-md-8">
+  			<div id="map_view" class="col-md-6 col-md-offset-2">
 				<div id="map_object"></div>
 			</div>
-  			<div id="scores_view" class="col-md-4"></div>
+  			<div id="crime_census_view" class="col-md-2 col-sm-offset-2"></div>
+			<div id="school_traffic_view" class="col-md-2 col-sm-offset-2"></div>
 		</div>
 	</div>
-
+</div>
 
 <script>
 
@@ -110,12 +115,14 @@ svg {
   	var census_score = data.score_data.census_raw.length == 0 ? 0 : data.score_data.census_score
   	var schools_score = data.score_data.schools_raw.length == 0 ? 0 : data.score_data.schools_score
 	// Generate the score plots
-	createChart("crime_score_wheel", "Crime Score", crime_score)
-	createChart("census_score_wheel", "Census Score",census_score)
-	createChart("school_score_wheel", "School Score",schools_score)
+	createChart("crime_census_view","crime_score_wheel", "Crime Score", crime_score)
+	createChart("crime_census_view","census_score_wheel", "Census Score",census_score)
+	createChart("school_traffic_view","school_score_wheel", "School Score",schools_score)
+	createChart("school_traffic_view","traffic_score_wheel", "Traffic Score",0)
+	// TODO:  Add comprehensive tooltips to the svgs, explaining the methodology
 
   // This function creates the score donuts on the rhs
-  function createChart(id, titleString, score){
+  function createChart(viewName,id, titleString, score){
 	// Mapping of scores to text and colors:  -1 -> 0 interval is for null case
 	var scoreMap = [{ "min_bound": -1, "max_bound": 0, "color": "#d6d6c2", "desc": "N/A"},
 					{ "min_bound": 0, "max_bound":1, "color": "#FF0000", "desc": "Terrible"},
@@ -137,8 +144,8 @@ svg {
 		}
 	}
 
-
-	$("#scores_view").append('<div id="' + id + '"></div>');
+	// use first argument to determine which view to add this donut to
+	$("#" + viewName).append('<div id="' + id + '"></div>');
 	var plotdiv = $("#" + id)
 	plotdiv.append("<svg></svg>")
 
@@ -198,7 +205,7 @@ svg {
 
 	  // Put the donut pie chart together
 	  d3.select("#" + id + " svg")
-		.datum(seedData(score))
+		.datum(scaleData(score))
 		.transition().duration(300)
 		.call(donutChart)
 		.call(centerText());
@@ -207,8 +214,8 @@ svg {
 	});
 
 
-	// Seed data to populate donut pie chart
-	function seedData(score) {
+	// Scale this score as data to populate donut pie chart
+	function scaleData(score) {
 	  return [
 		{
 		  "label": "good",
@@ -229,6 +236,7 @@ svg {
 	  .attr("font-weight",600)
 	  .attr("font-size","20px")
 	  .text(titleString);
+
 	}
 </script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC1h2PWILmMxZm5ipfiApFUdus_NvsI8WE&callback=initMap" async defer></script>
