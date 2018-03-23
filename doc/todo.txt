@@ -1,14 +1,27 @@
-- Fine tune the methodology for each dimension, especially the census data
-- Write a new task to download, extract and pickle the traffic data for BC
+TODO IN TRELLO:
+- Fine tune the methodology for each dimension, especially the census data - (DONE, MOSTLY)
+- Write new task(s) to extract and pickle the traffic data for BC, AB, ON
+- Include AB, ON as supported provinces by providing schools and traffic data
 - Extend BuildDatabase to export the traffic data
-- Implement traffic data scoring in the scoring service
+- Implement traffic data scoring in the scoring service - this will be more involved
 - Include sex of child as an input parameter to refine demographic scoring
 - Include province code (e.g. BC, AB) in all relevant tables
-- Break down schools by elementary/secondary based on age of child (ie. 1-6 -> elementary; 7-9 -> both; 10-18 ->
-- Figure out where to put the services so they can be accessed by the app and the data processing pipeline
+- Filter by province in the scoring service when creating baselines for census data
+- Break down schools by elementary/secondary based on age of child (ie. 1-6 -> elementary; 7-9 -> both; 10-18 -> secondary)
+- Figure out where to put the services so they can be accessed by the app and the data processing pipeline (DONE)
+- Implement/test sign in functionality
+- Implement email/contact functionality
+- Implement Facebook sharing functionality
+- Implement Twitter sharing functionality
+- Remove Instagram sharing button
+- Create 'About' page
+- Create 'FAQ' page
+- Buy domain
+- Deploy
 
 
 FUTURE IMPROVEMENTS:
-- look at school zonings do better refine scoring
+- look at school zonings to better refine scoring
 - include cultural mix as a dimension
 - make dimensions configurable (e.g. schools are very important, demographics less so)
+-

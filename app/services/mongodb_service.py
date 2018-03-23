@@ -36,11 +36,14 @@ def mg_get(filter, collection_name, projection={}):
     recs = [x for x in curs]
     return recs
 
-def mg_get_near(collection_name, lat, lon, dist_in_m):
+def mg_get_near(collection_name, lat, lon, dist_in_m=None):
     client = MongoClient(conn_str)
     db = client[db_name]
     collection = db[collection_name]
-    curs = collection.find({ "location": { "$nearSphere": { "$geometry": { "type": "Point", "coordinates": [ lon, lat ] }, "$maxDistance": dist_in_m } } })
+    if dist_in_m:
+        curs = collection.find({ "location": { "$nearSphere": { "$geometry": { "type": "Point", "coordinates": [ lon, lat ] }, "$maxDistance": dist_in_m } } })
+    else:
+        curs = collection.find({"location": {"$nearSphere": {"$geometry": {"type": "Point", "coordinates": [lon, lat]}}}})
     recs = [x for x in curs]
     client.close()
     return recs

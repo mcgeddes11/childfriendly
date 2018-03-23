@@ -2,7 +2,7 @@ import sys, yaml, hashlib, json, os, logging, luigi
 from shutil import copy2
 from build_utils import create_folder
 from datetime import datetime
-from tasks import RunTests, DownloadCensusData, ParseCrimeData, DownloadCensusShapefile, GetFraserSchoolData, ProcessCensusData, GeocodeCrimeData, GeocodeSchoolData, BuildDatabase
+from tasks import RunTests, DownloadCensusData, ParseCrimeData, DownloadCensusShapefile, GetFraserSchoolData, ProcessCensusData, GeocodeCrimeData, GeocodeSchoolData, BuildDatabase, ParseBcTrafficData
 
 
 
@@ -40,6 +40,9 @@ if __name__ == "__main__":
     tasks.append(ProcessCensusData().withConfig(config))
     tasks.append(GeocodeCrimeData().withConfig(config))
     for province in config["provinces"]:
+        # Traffic
+        if province == "BC":
+            tasks.append(ParseBcTrafficData().withConfig(config))
         tasks.append(GetFraserSchoolData(province).withConfig(config))
         tasks.append(GeocodeSchoolData(province).withConfig(config))
     tasks.append(BuildDatabase().withConfig(config))

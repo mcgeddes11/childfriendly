@@ -12,6 +12,13 @@ def compute_score(lat, lon, age):
     census_data = mg_get_near("census", lat, lon, 20000)[0:5]
     crime_data = mg_get_near("crime", lat, lon, 20000)[0:5]
     school_data = mg_get_near("schools", lat, lon, 20000)[0:5]
+    traffic_data = mg_get_near("traffic", lat, lon, 20000)[0:5]
+
+    # Select top 5 to compute scores
+    census_data = census_data[0:5]
+    crime_data = crime_data[0:5]
+    school_data = school_data[0:5]
+
 
     # Get all crime data to determine the 1-10 scores
     all_crime = mg_get({},"crime")
@@ -19,6 +26,10 @@ def compute_score(lat, lon, age):
     # Get all school scores to determine 1-10 scores
     all_schools = mg_get({},"schools")
     all_school_scores = numpy.array([x["score"] for x in all_schools])
+    # Get all traffic data to determine 1-10 scores
+    all_traffic = mg_get({},"traffic")
+    all_traffic_scores = numpy.array([x["traffic_ratio"] for x in all_traffic])
+
     # Get all census data for this province
     # TODO: Pass province as argument
     # TODO: Include province code (e.g. BC, AB) in all tables
@@ -26,6 +37,20 @@ def compute_score(lat, lon, age):
     all_census = mg_get({"province_id": "59"},"census")
     # Compute ratios for each census district for comparison purposes
     all_ratios = demographic_ratios_for_age(all_census,age, plusminus=2)
+
+
+
+    # Traffic scores - * - * - * - * - * - * - * - *
+    # TODO: refine this methodology - maybe use commute times from census data?
+    if len(traffic_data) == 0:
+        final_traffic_scaled = 0
+    else:
+        final_traffic_scaler = MinMaxScaler(feature_range=(1,10))
+        final_traffic_scaler.fit(all_traffic_scores.reshape(-1,1))
+        local_traffic_ratio = numpy.mean([x["traffic_ratio"] for x in traffic_data])
+        final_traffic_scaled = final_traffic_scaler.transform(local_traffic_ratio)[0][0]
+        final_traffic_scaled = 10 - final_traffic_scaled
+
 
     # Demographic score - * - * - * - * - * - * - * - *
     if len(census_data) == 0:
@@ -112,6 +137,7 @@ def compute_score(lat, lon, age):
     print "Scaled Crime: " + str(final_crime_scaled)
     print "Scaled Schools: " + str(final_school_scaled)
     print "Scaled Demographics: " + str(final_census_scaled)
+    print "Scaled Traffic: " + str(final_traffic_scaled)
 
     # Remove Mongo indexes and out data
 
@@ -120,7 +146,9 @@ def compute_score(lat, lon, age):
          "crime_score": final_crime_scaled,
          "crime_raw": [ {i: x[i] for i in x if i != '_id'} for x in crime_data],
          "schools_score": final_school_scaled,
-         "schools_raw": [ {i: x[i] for i in x if i != '_id'} for x in school_data]}
+         "schools_raw": [ {i: x[i] for i in x if i != '_id'} for x in school_data],
+         "traffic_score": final_traffic_scaled,
+         "traffic_raw": [ {i: x[i] for i in x if i != '_id'} for x in traffic_data]}
     return d
 
 # Compute distance between 2 lat/lon points, in km
