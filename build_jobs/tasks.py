@@ -135,6 +135,38 @@ class DownloadCensusShapefile(ConfigurableTask):
         z = zipfile.ZipFile(StringIO.StringIO(r.content))
         z.extractall(os.path.dirname(self.output()["census_shapefile"].path))
 
+class ParseBcTrafficData(ConfigurableTask):
+    def output(self):
+        return {"traffic_processed": luigi.LocalTarget(os.path.join(self.build_config["data_repository"], "Processed", "BC", "bc_traffic.pickle"))}
+
+    def run(self):
+        # This is the traffic data for BC (in data folder)
+        # TODO: make sure this source is in datamap
+        data = load_data("../data/traffic_bc_1994_2015.csv")
+        yr_cols = [str(x) for x in range(1994,2016)]
+        values = data[yr_cols]
+        data = data.drop(yr_cols,axis=1)
+        # Take vanilla max for now
+
+        max_values = numpy.nanmax(values,axis=1)
+        data["average_count"] = max_values
+
+
+        # Create data for insertion into MongoDb
+        d = []
+        for ix, row in data.iterrows():
+            from_loc = row["From Landmark"] if pandas.notnull(row["From Landmark"]) else "?"
+            to_loc = row["To Landmark"] if pandas.notnull(row["To Landmark"]) else "?"
+            record = {"site_no": row["SiteNo"],
+                      "description": row["Description"],
+                      "direction": row["Direction"],
+                      "location": {"type": "Point", "coordinates": [row["LONGITUDE"], row["LATITUDE"]]},
+                      "from_to": "From " + from_loc + " to " + to_loc,
+                      "traffic_count": row["average_count"]}
+            d.append(record)
+
+        save_data(d,self.output()["traffic_processed"].path)
+
 
 # 6. Geocode the school data using Google Maps API
 class GeocodeSchoolData(ConfigurableTask):
@@ -301,7 +333,12 @@ class BuildDatabase(ConfigurableTask):
                 "crime_processed": GeocodeCrimeData().withConfig(self.build_config)}
 
         for province in self.build_config["provinces"]:
+            # Schools
             tasks["schools_processed_" + province] = GeocodeSchoolData(province).withConfig(self.build_config)
+            # Traffic
+            # TODO: include processes for other provinces
+            if province == "BC":
+                tasks["traffic_processed_" + province] = ParseBcTrafficData().withConfig(self.build_config)
         return tasks
 
     def output(self):
@@ -312,6 +349,7 @@ class BuildDatabase(ConfigurableTask):
         # Load in the processed data
         census_data = load_data(self.input()["census_processed"]["census_processed"].path)
         crime_data = load_data(self.input()["crime_processed"]["crime_processed"].path)
+
         # Combine school data into one table
         school_dict = {}
         for p in self.build_config["provinces"]:
@@ -323,6 +361,18 @@ class BuildDatabase(ConfigurableTask):
         school_data = []
         for p in school_dict.keys():
             school_data = school_data + school_dict[p]
+
+        # Combine traffic data into one table
+        traffic_dict = {}
+        for p in self.build_config["provinces"]:
+            this_province = load_data(self.input()["traffic_processed_" + p]["traffic_processed"].path)
+            # Assign province code
+            for ix, el in enumerate(this_province):
+                this_province[ix]["province"] = p
+            traffic_dict[p] = this_province
+        traffic_data = []
+        for p in school_dict.keys():
+            traffic_data = traffic_data + traffic_dict[p]
 
         # Hacky clean up for broken UTF-8 fields...
         for ix, el in enumerate(census_data):
@@ -344,19 +394,43 @@ class BuildDatabase(ConfigurableTask):
             new_c = [c[1], c[0]]
             school_data[ix]["location"]["coordinates"] = new_c
 
+
         # POPULATE DB FOR TESTING
         # TODO: Add TRAFFIC!!
         mg_drop("census")
         mg_drop("crime")
         mg_drop("schools")
+        mg_drop("traffic")
         mg_save(census_data, "census")
         mg_save(crime_data, "crime")
         mg_save(school_data, "schools")
 
-        # Add indexes
+        # Add indexes for schools, census and crime
         mg_create_geo_index("census", "location")
         mg_create_geo_index("crime", "location")
         mg_create_geo_index("schools", "location")
+
+        # Now that we have the census data in the database, we need to scale the traffic data by the local populations.
+        # Let's try 20km as an appropriate radius here to start with?
+        for ix, rec in enumerate(traffic_data):
+            lat = rec["location"]["coordinates"][1]
+            lon = rec["location"]["coordinates"][0]
+            local_census = mg_get_near("census",lat, lon, 20000)
+            # Compute total population
+            total_pop = total_pop = numpy.sum([x["total_population"] for x in local_census])
+            # If population is zero, get nearest non-zero record and use that
+            if len(local_census) == 0 or total_pop == 0:
+                local_census = mg_get_near("census", lat, lon)
+                for el in local_census:
+                    if el["total_population"] > 0:
+                        total_pop = el["total_population"]
+                        break
+
+            traffic_data[ix]["traffic_ratio"] = float(rec["traffic_count"]) / total_pop
+
+        # Save traffic and create indexes
+        mg_save(traffic_data, "traffic")
+        mg_create_geo_index("traffic", "location")
 
 
         open(self.output()["mongodb_created"].path,"w").close()

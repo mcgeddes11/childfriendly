@@ -9,6 +9,7 @@ from flask_login import logout_user, current_user
 
 from app import app, lm, geocoder
 # Need to ensure path to services is on PYTHONPATH
+from app_utils import is_integer
 from services import scoring_service
 from forms import LoginForm
 from models import User
@@ -20,9 +21,9 @@ def index():
     msg = ""
     return render_template('index.html', msg=msg)
 
-@app.route("/methodology")
-def methodology():
-    return render_template('methodology.html')
+@app.route("/about")
+def about():
+    return render_template('about.html')
 
 @app.route("/contact")
 def contact():
@@ -33,20 +34,23 @@ def compute_friendliness():
     msg = ""
     address = request.args["address"]
     age = request.args["age"]
-    # TODO: check inputs
+    # Check inputs
+    # Age needs to be an integer between 0 and 18
+    valid_age, age_int = is_integer(age)
+    # If address is invalid, geocoder will return None
 
     # Testing
-    lat = 49.2489053
-    lon = -123.1433611
-    score_data = scoring_service.compute_score(lat,lon,5)
-    data = {"address": address, "lat": lat, "lon": lon, "age": age, "score_data": score_data}
+    # lat = 49.2489053
+    # lon = -123.1433611
+    # score_data = scoring_service.compute_score(lat,lon,5)
+    # data = {"address": address, "lat": lat, "lon": lon, "age": age, "score_data": score_data}
 
     # For realsies
     # Use google geolocator api to get the lat/long
-    # co_ords = geocoder.geocode(address)
-    # # Score based on location
-    # score_data = scoring_service.compute_score(co_ords.latitude, co_ords.longitude, int(age))
-    # data = {"address": co_ords.address, "lat": co_ords.latitude, "lon": co_ords.longitude, "age": age, "score_data": score_data}
+    co_ords = geocoder.geocode(address)
+    # Score based on location
+    score_data = scoring_service.compute_score(co_ords.latitude, co_ords.longitude, age_int)
+    data = {"address": co_ords.address, "lat": co_ords.latitude, "lon": co_ords.longitude, "age": age, "score_data": score_data}
 
     return render_template("results.html", msg=msg, data=json.dumps(data))
 
