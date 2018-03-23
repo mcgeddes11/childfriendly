@@ -55,8 +55,17 @@ body.loading .modal {
                   <button onClick="addLoading()" id="go_button" value="submit" type="submit" class="btn btn-block btn-lg btn-primary">Try it!</button>
                 </div>
               </div>
+            {% with messages = get_flashed_messages() %}
+              {% if messages %}
+                <div class=flashes>
+                {% for message in messages %}
+                  <div>{{ message }}</div>
+                {% endfor %}
+                </div>
+              {% endif %}
+            {% endwith %}
             </form>
-            <div id="msg">{{ msg }}</div>
+
           </div>
         </div>
       </div>

@@ -2,17 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e91380db-7b50-4609-8424-983299d1ff9d" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/app/app_utils.py" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/app/app/templates/methodology.html" afterPath="$PROJECT_DIR$/app/app/templates/about.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/app/templates/base.html" afterPath="$PROJECT_DIR$/app/app/templates/base.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/app/templates/results.html" afterPath="$PROJECT_DIR$/app/app/templates/results.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/app/templates/index.html" afterPath="$PROJECT_DIR$/app/app/templates/index.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/app/views.py" afterPath="$PROJECT_DIR$/app/app/views.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/services/mongodb_service.py" afterPath="$PROJECT_DIR$/app/services/mongodb_service.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/services/scoring_service.py" afterPath="$PROJECT_DIR$/app/services/scoring_service.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build_jobs/job_definition.py" afterPath="$PROJECT_DIR$/build_jobs/job_definition.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build_jobs/tasks.py" afterPath="$PROJECT_DIR$/build_jobs/tasks.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/todo.txt" afterPath="$PROJECT_DIR$/doc/todo.txt" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -24,14 +15,24 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="views.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="views.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/app/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="289">
-              <caret line="51" column="35" lean-forward="false" selection-start-line="51" selection-start-column="35" selection-end-line="51" selection-end-column="35" />
+            <state relative-caret-position="266">
+              <caret line="63" column="0" lean-forward="false" selection-start-line="63" selection-start-column="0" selection-end-line="63" selection-end-column="0" />
               <folding>
-                <element signature="e#77#141#0" expanded="true" />
+                <element signature="e#77#148#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="index.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/app/templates/index.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="425">
+              <caret line="65" column="25" lean-forward="false" selection-start-line="65" selection-start-column="25" selection-end-line="65" selection-end-column="25" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -40,7 +41,7 @@
         <entry file="file://$PROJECT_DIR$/app/app/app_utils.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="119">
-              <caret line="7" column="22" lean-forward="true" selection-start-line="7" selection-start-column="22" selection-end-line="7" selection-end-column="22" />
+              <caret line="7" column="22" lean-forward="false" selection-start-line="7" selection-start-column="22" selection-end-line="7" selection-end-column="22" />
               <folding />
             </state>
           </provider>
@@ -104,11 +105,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="scoring_service.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="scoring_service.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/services/scoring_service.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="369">
-              <caret line="187" column="30" lean-forward="false" selection-start-line="187" selection-start-column="30" selection-end-line="187" selection-end-column="30" />
+              <caret line="44" column="0" lean-forward="false" selection-start-line="44" selection-start-column="0" selection-end-line="44" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -179,7 +180,6 @@
         <option value="$PROJECT_DIR$/app/app/templates/methodology.html" />
         <option value="$PROJECT_DIR$/app/app/templates/contact.html" />
         <option value="$PROJECT_DIR$/doc/notes.txt" />
-        <option value="$PROJECT_DIR$/app/app/templates/index.html" />
         <option value="$PROJECT_DIR$/app/app/templates/base.html" />
         <option value="$PROJECT_DIR$/doc/todo.txt" />
         <option value="$PROJECT_DIR$/build_jobs/job_definition.py" />
@@ -189,6 +189,7 @@
         <option value="$PROJECT_DIR$/app/services/scoring_service.py" />
         <option value="$PROJECT_DIR$/app/app/app_utils.py" />
         <option value="$PROJECT_DIR$/app/app/views.py" />
+        <option value="$PROJECT_DIR$/app/app/templates/index.html" />
       </list>
     </option>
   </component>
@@ -213,7 +214,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -357,6 +357,7 @@
         </subPane>
       </pane>
       <pane id="Scope" />
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -531,7 +532,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-5" y="24" width="1930" height="933" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24973932" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -596,7 +596,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/app/app/views.py</url>
-          <line>49</line>
+          <line>52</line>
           <option name="timeStamp" value="234" />
         </line-breakpoint>
       </breakpoints>
@@ -803,13 +803,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/app/templates/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2541">
-          <caret line="17" column="57" lean-forward="false" selection-start-line="17" selection-start-column="57" selection-end-line="17" selection-end-column="57" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/scripts/sandbox.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="323">
@@ -945,29 +938,37 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/services/scoring_service.py">
+    <entry file="file://$PROJECT_DIR$/app/app/app_utils.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="369">
-          <caret line="187" column="30" lean-forward="false" selection-start-line="187" selection-start-column="30" selection-end-line="187" selection-end-column="30" />
+        <state relative-caret-position="119">
+          <caret line="7" column="22" lean-forward="false" selection-start-line="7" selection-start-column="22" selection-end-line="7" selection-end-column="22" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/app/app_utils.py">
+    <entry file="file://$PROJECT_DIR$/app/app/templates/index.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
-          <caret line="7" column="22" lean-forward="true" selection-start-line="7" selection-start-column="22" selection-end-line="7" selection-end-column="22" />
+        <state relative-caret-position="425">
+          <caret line="65" column="25" lean-forward="false" selection-start-line="65" selection-start-column="25" selection-end-line="65" selection-end-column="25" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/app/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="289">
-          <caret line="51" column="35" lean-forward="false" selection-start-line="51" selection-start-column="35" selection-end-line="51" selection-end-column="35" />
+        <state relative-caret-position="266">
+          <caret line="63" column="0" lean-forward="false" selection-start-line="63" selection-start-column="0" selection-end-line="63" selection-end-column="0" />
           <folding>
-            <element signature="e#77#141#0" expanded="true" />
+            <element signature="e#77#148#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/services/scoring_service.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="369">
+          <caret line="44" column="0" lean-forward="false" selection-start-line="44" selection-start-column="0" selection-end-line="44" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
