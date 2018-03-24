@@ -33,37 +33,39 @@ def compute_friendliness():
     errors = False
     address = request.args["address"]
     age = request.args["age"]
-    # Check age input - needs to be an integer between 0 and 18
-    valid_age, age_int = is_integer(age)
-    if not valid_age:
-        flash("Oops!  Looks like you entered a non-numeric age!")
-        errors = True
-    if age_int > 18 or age_int < 0:
-        flash("Oops!  Age should be a number between 0 and 18 (in years)!")
-        errors = True
+
 
     # Testing
-    # lat = 49.2489053
-    # lon = -123.1433611
-    # score_data = scoring_service.compute_score(lat,lon,5)
-    # data = {"address": address, "lat": lat, "lon": lon, "age": age, "score_data": score_data}
+    lat = 49.2489053
+    lon = -123.1433611
+    score_data = scoring_service.compute_score(lat,lon,5)
+    data = {"address": address, "lat": lat, "lon": lon, "age": age, "score_data": score_data}
+    return render_template("results.html", data=json.dumps(data))
 
     # For realsies
-    # Use google geolocator api to try and get the lat/long  - if address is invalid, geocoder will return None
-    co_ords = geocoder.geocode(address)
-
-    if co_ords is None:
-        flash("Oops!  You input an address that is not supported!")
-        errors = True
-
-    # Stay on index and flash messages if inputs are borked
-    if errors:
-        return render_template("index.html")
-    else:
-        # Score based on location
-        score_data = scoring_service.compute_score(co_ords.latitude, co_ords.longitude, age_int)
-        data = {"address": co_ords.address, "lat": co_ords.latitude, "lon": co_ords.longitude, "age": age, "score_data": score_data}
-        return render_template("results.html", data=json.dumps(data))
+    # # Check age input - needs to be an integer between 0 and 18
+    # is_int, age_int = is_integer(age)
+    # if not is_int:
+    #     flash("Oops!  Looks like you entered a non-numeric age!")
+    #     errors = True
+    # if age_int > 18 or age_int < 0:
+    #     flash("Oops!  Age should be between 0 and 18 (in years)!")
+    #     errors = True
+    # # Use google geolocator api to try and get the lat/long  - if address is invalid, geocoder will return None
+    # co_ords = geocoder.geocode(address)
+    #
+    # if co_ords is None:
+    #     flash("Oops!  We couldn't find that address!")
+    #     errors = True
+    #
+    # # Stay on index and flash messages if inputs are borked
+    # if errors:
+    #     return render_template("index.html")
+    # else:
+    #     # If inputs are good, score based on locations
+    #     score_data = scoring_service.compute_score(co_ords.latitude, co_ords.longitude, age_int)
+    #     data = {"address": co_ords.address, "lat": co_ords.latitude, "lon": co_ords.longitude, "age": age, "score_data": score_data}
+    #     return render_template("results.html", data=json.dumps(data))
 
 
 

@@ -118,14 +118,13 @@ svg {
 	});
 
 	// Crime
-	addItems(data.score_data.crime_raw, map, icons.crime.icon);
+	addItems(data.score_data.crime_raw, map, icons.crime.icon, "Crime");
 	// Schools
-	addItems(data.score_data.schools_raw, map, icons.school.icon);
+	addItems(data.score_data.schools_raw, map, icons.school.icon, "School");
 	// Census
-	addItems(data.score_data.census_raw, map, icons.census.icon);
+	addItems(data.score_data.census_raw, map, icons.census.icon, "Census Collection Point");
 	// Traffic
-	// TODO: Replace with data once available
-	addItems(data.score_data.traffic_raw,  map, icons.traffic.icon)
+	addItems(data.score_data.traffic_raw,  map, icons.traffic.icon, "Traffic Collection Point")
 
 	var legend = document.getElementById('legend');
         for (var key in icons) {
@@ -142,21 +141,34 @@ svg {
   }
 
   // Function to add records and tooltips to the map
-  function addItems(data,map,url){
-	var record;
-	var lat;
-	var lon;
-	var marker
+  function addItems(data,map,url,dataType){
+	var record, lat, lon, contentString;
+	var infoWindow = null;
 	// TODO: add tooltips to these with the location name and scaled scores
 	for (ii = 0; ii < data.length; ii++){
 		record = data[ii]
 		lat = record.location.coordinates[1]
 		lon = record.location.coordinates[0]
-		marker = new google.maps.Marker({
+		contentString = getMapPopupContent(record, dataType);
+		var marker = new google.maps.Marker({
 			position: {lat: lat, lng: lon},
 			map: map,
 			icon: url
 		});
+		marker.html = contentString;
+		infoWindow = new google.maps.InfoWindow({
+          content: "holding..."
+        });
+
+		google.maps.event.addListener(marker, 'click', function(){
+			infoWindow.setContent(this.html);
+			infoWindow.open(map,this)
+		});
+
+		//marker.addListener('click', function() {
+        //  infoWindow.open(map, marker);
+        //});
+
 	}
   }
 
@@ -288,6 +300,48 @@ svg {
 	  .attr("font-size","20px")
 	  .text(titleString);
 
+	}
+
+	function getMapPopupContent(record, dataType){
+		var contentString = '<div id="content">'+
+						'<div id="siteNotice">'+
+						'</div>'+
+						'<h3 id="firstHeading" class="firstHeading">' + dataType + '</h3>'+
+						'<div id="bodyContent">'+
+						'<p>BODY_CONTENT</p>'+
+						'</div>'+
+						'</div>';
+		var details;
+		if (dataType.startsWith("Crime")){
+
+			details = '<p><b>' + record["town_name"] + ', ' + record["province_name"] + '</b></p><b>CSI: ' + record["csi"].toString() +'</b>' +
+					  '<p>The Crime Severity Index (CSI) tracks changes in the severity of police-reported crime by accounting for both the amount ' +
+					  'of crime reported by police in a given jurisdiction and the relative seriousness of these crimes. It tells us not only how much crime ' +
+					  'is coming to the attention of police, but also about the seriousness of that crime.</p>' +
+					  '<p>More information:  <a href="http://www.statcan.gc.ca/pub/85-004-x/85-004-x2009001-eng.htm?contentType=application%2Fpdf">'+
+            		  'here</a></p>'
+		} else if (dataType.startsWith("School")){
+			details = '<p><b>' + record["school_name"] + '</b></p><b>Rating: ' + record["score"].toString() +'</b>' +
+					  '<p>School performance ratings were sourced from  a study undertaken by The Fraser Institute.  They use a 0 to 10 scale, with 10 being the highest performing.' +
+					  '</p>' +
+					  '<p>More information:  <a href="https://www.fraserinstitute.org/school-performance">'+
+            		  'here</a></p>'
+		} else if (dataType.startsWith("Census")){
+			details = '<p><b>' + record["subdistrict_name"] + ', ' + record["province_name"] + '</b></p>' +
+					  '<b>Population: ' + record["total_population"].toString() +'</b>' +
+					  '<p>Demographic scores were generated using census data at the subdistrict level. ' +
+					  'Scores are computed by comparing the number of children in your childs age bracket relative to provincial averages.</p>' +
+					  '<p>More information:  <a href="http://www12.statcan.gc.ca/census-recensement/2016/dp-pd/index-eng.cfm">'+
+            		  'here</a></p>'
+		} else if (dataType.startsWith("Traffic")){
+			details = '<p><b>Route:  ' + record["description"] + '</b></p>' +
+					  '<p><b>Site No:  ' + record["site_no"] + '</b></p>' +
+					  '<p><b>Traffic count: ' + record["traffic_count"].toString() +'</b></p>' +
+					  '<p><b>Traffic ratio: ' + record["traffic_ratio"].toString() +'</b></p>' +
+					  '<p>Traffic scores were computed using local traffic data normalized by population size. </p>'
+		}
+		contentString = contentString.replace("BODY_CONTENT",details)
+		return contentString;
 	}
 </script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC1h2PWILmMxZm5ipfiApFUdus_NvsI8WE&callback=initMap" async defer></script>
