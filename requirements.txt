@@ -28,7 +28,7 @@ Flask-WTF==0.14.2
 geopy==1.11.0
 idna==2.6
 itsdangerous==0.24
-Jinja2==2.10
+Jinja2==2.11.3
 lockfile==0.12.2
 luigi==2.7.2
 lxml==4.1.1
